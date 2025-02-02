@@ -21,8 +21,14 @@ void vectorInit(float* v, int size) {
 
 int verifyVector(float* a, float* b, float* c, float scale, int size) {
 	int errorCount = 0;
+	float left;
+	float right;
+	float epsilon;
 	for (int idx = 0; idx < size; ++idx) {
-		if (c[idx] != scale * a[idx] + b[idx]) {
+		left = c[idx];
+		right = scale * a[idx] + b[idx];
+		epsilon = std::numeric_limits<float>::epsilon() * std::fmax(std::fabs(left), std::fabs(right));
+		if (std::fabs(left - right) > epsilon) {
 			++errorCount;
 			#ifndef DEBUG_PRINT_DISABLE
 				std::cout << "Idx " << idx << " expected " << scale * a[idx] + b[idx] 
@@ -76,7 +82,7 @@ int runCpuSaxpy(uint64_t vectorSize) {
 	vectorInit(b, vectorSize);
 	//	C = B
 	std::memcpy(c, b, vectorSize * sizeof(float));
-	float scale = 2.0f;
+	float scale = 1234567.89f;
 
 	#ifndef DEBUG_PRINT_DISABLE 
 		printf("\n Adding vectors : \n");
